@@ -2,6 +2,9 @@
 
 namespace App\Database;
 
+use PDO;
+use PDOException;
+
 class Database
 {
     private $servername;
@@ -9,12 +12,11 @@ class Database
     private $password;
     private $dbname;
     private $charset;
-    private $connect;
-
+    private $pdo;
 
     public function __construct()
     {
-        $config = require_once __DIR__ . '/../config/database.php';
+        $config = require __DIR__ . '/../config/database.php';
         $this->servername = $config['servername'];
         $this->username = $config['username'];
         $this->password = $config['password'];
@@ -24,30 +26,32 @@ class Database
 
     public function connect()
     {
-        $this->connect = new \mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        if ($this->pdo === null) {
+            try {
+                $dsn = "mysql:host={$this->servername};dbname={$this->dbname};charset={$this->charset}";
+                $this->pdo = new PDO($dsn, $this->username, $this->password);
 
-        if ($this->connect->connect_error) {
-            die("Connection failed: " . $this->connect->connect_error);
+                // Устанавливаем режим обработки ошибок
+                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                // Возвращаем результаты как ассоциативные массивы
+                $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                die("Connection failed: " . $e->getMessage());
+            }
         }
-
-        $this->connect->set_charset($this->charset);
-        return $this->connect;
+        return $this->pdo;
     }
 
-    public function execute($query)
+    public function query($sql, $params = [])
     {
-        if ($this->connect->query($query) === TRUE) {
-            return true;
-        } else {
-            echo "Error: " . $this->connect->error;
-            return false;
-        }
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
     }
 
     public function close()
     {
-        if ($this->connect) {
-            $this->connect->close();
-        }
+        $this->pdo = null;
     }
 }

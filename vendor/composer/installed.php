@@ -3,7 +3,7 @@
         'name' => 'user/calculators',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '7c275eb2b29f57cc131ff6a7bb845056f6475a93',
+        'reference' => '4928a4ca613cb5bdb28f7e84e524141d4c32409d',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -265,7 +265,7 @@
         'user/calculators' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '7c275eb2b29f57cc131ff6a7bb845056f6475a93',
+            'reference' => '4928a4ca613cb5bdb28f7e84e524141d4c32409d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
